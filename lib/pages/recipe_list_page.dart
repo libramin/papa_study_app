@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:papa_study_app/datas/recipe_data.dart';
 import 'package:papa_study_app/pages/recipe_detail_page.dart';
+import 'package:papa_study_app/pages/recipe_favorite_page.dart';
 
-class RecipeListPage extends StatelessWidget {
+class RecipeListPage extends StatefulWidget {
   const RecipeListPage({Key? key}) : super(key: key);
+
+  @override
+  State<RecipeListPage> createState() => _RecipeListPageState();
+}
+
+class _RecipeListPageState extends State<RecipeListPage> {
+
+  Set<FoodData> favoritesList = Set<FoodData>();
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +20,10 @@ class RecipeListPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Recipe List'),
         actions: [
-          IconButton(onPressed: (){}, icon: const Icon(Icons.favorite)),
+          IconButton(onPressed: (){
+            Navigator.push(context, MaterialPageRoute(
+                builder: (_) => RecipeFavoritePage(favoritesList.toList())));
+          }, icon: const Icon(Icons.favorite)),
         ],
       ),
       body: ListView.builder(
@@ -22,8 +34,8 @@ class RecipeListPage extends StatelessWidget {
     );
   }
 
-
   Widget _showFoodList(FoodData _foodData){
+    bool _isFavorite = favoritesList.contains(_foodData);
     return Builder(
       builder: (context) {
         return GestureDetector(
@@ -47,8 +59,18 @@ class RecipeListPage extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             fontSize: 18.0),),
                       IconButton(
-                          onPressed: (){},
-                          icon: Icon(Icons.favorite,
+                          onPressed: (){
+                            setState(() {
+                              if(_isFavorite) {
+                                favoritesList.remove(_foodData);
+                              }else{
+                                favoritesList.add(_foodData);
+                              }
+                              print(favoritesList.toString());
+                            });
+                          },
+                          icon: Icon(
+                            _isFavorite ? Icons.favorite : Icons.favorite_outline,
                             color: Colors.red,))
                     ],
                   ),
