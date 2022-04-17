@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:papa_study_app/datas/recipe_data.dart';
+import 'package:papa_study_app/pages/auth_page.dart';
 import 'package:papa_study_app/pages/recipe_detail_page.dart';
 import 'package:papa_study_app/pages/recipe_favorite_page.dart';
+import 'package:papa_study_app/provider/page_notifier.dart';
+import 'package:provider/provider.dart';
 
 class RecipeListPage extends StatefulWidget {
   const RecipeListPage({Key? key}) : super(key: key);
+
+  static final pageName = 'RecipeListPage';
 
   @override
   State<RecipeListPage> createState() => _RecipeListPageState();
@@ -24,6 +29,10 @@ class _RecipeListPageState extends State<RecipeListPage> {
             Navigator.push(context, MaterialPageRoute(
                 builder: (_) => RecipeFavoritePage(favoritesList.toList())));
           }, icon: const Icon(Icons.favorite)),
+          IconButton(onPressed: (){
+            Provider.of<PageNotifier>(context,listen: false).goToOtherPage(AuthPage.pageName);
+          },
+              icon: const Icon(Icons.logout)),
         ],
       ),
       body: ListView.builder(
@@ -66,7 +75,6 @@ class _RecipeListPageState extends State<RecipeListPage> {
                               }else{
                                 favoritesList.add(_foodData);
                               }
-                              print(favoritesList.toString());
                             });
                           },
                           icon: Icon(
