@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "892131387026",
+    "project_id": "papastudy-app",
+    "storage_bucket": "papastudy-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:892131387026:android:c95c3025eefb95bb7a284b",
+        "android_client_info": {
+          "package_name": "com.example.papa_study_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "892131387026-im3qqklv6f7n36dkilbpni9vtemm2f7t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1Pw3PYiZAAnegI__UdF0juRBau0Jy1rk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "892131387026-im3qqklv6f7n36dkilbpni9vtemm2f7t.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "892131387026-8osqprs2fipoou8hggjuti94cj58q2t7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.papaStudyApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

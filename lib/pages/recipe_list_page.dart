@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:papa_study_app/datas/recipe_data.dart';
 import 'package:papa_study_app/pages/auth_page.dart';
@@ -30,7 +31,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
                 builder: (_) => RecipeFavoritePage(favoritesList.toList())));
           }, icon: const Icon(Icons.favorite)),
           IconButton(onPressed: (){
-            Provider.of<PageNotifier>(context,listen: false).goToOtherPage(AuthPage.pageName);
+            FirebaseAuth.instance.signOut();
           },
               icon: const Icon(Icons.logout)),
         ],

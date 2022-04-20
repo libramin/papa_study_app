@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:papa_study_app/provider/page_notifier.dart';
@@ -48,7 +49,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget> {
               child: ListView(
                 reverse: true,
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
                 children: [
                   CircleAvatar(
                     backgroundColor: Colors.white38,
@@ -58,21 +59,21 @@ class _AuthPageWidgetState extends State<AuthPageWidget> {
                   SizedBox(height: 20),
                   _AuthStateButton(),
                   if(_isRegister)
-                  Column(
-                    children: [
-                      _EmailTextFormField(1,_emailController),
-                      SizedBox(height: 20),
-                      _PasswordTextFormField(2,_passwordController),
-                      SizedBox(height: 20),
-                      _ConfirmPasswordTextFormField(),
-                    ],
-                  ),
+                    Column(
+                      children: [
+                        _EmailTextFormField(1, _emailController),
+                        SizedBox(height: 20),
+                        _PasswordTextFormField(2, _passwordController),
+                        SizedBox(height: 20),
+                        _ConfirmPasswordTextFormField(),
+                      ],
+                    ),
                   if(!_isRegister)
                     Column(
                       children: [
-                        _EmailTextFormField(3,_LoginEmailController),
+                        _EmailTextFormField(3, _LoginEmailController),
                         SizedBox(height: 20),
-                        _PasswordTextFormField(4,_LoginPasswordController),
+                        _PasswordTextFormField(4, _LoginPasswordController),
                       ],
                     ),
                   SizedBox(height: 20),
@@ -82,11 +83,43 @@ class _AuthPageWidgetState extends State<AuthPageWidget> {
                           primary: Colors.white54,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10))),
-                      onPressed: () {
+                      onPressed: () async {
                         if (_FormKey.currentState!.validate()) {
-                          print('모든 입력값이 올바르다');
-                          Provider.of<PageNotifier>(context, listen: false)
-                              .goToMain();
+                          if (_isRegister) {
+                            try {
+                              UserCredential userCredential = await FirebaseAuth
+                                  .instance.createUserWithEmailAndPassword(
+                                  email: _emailController.text,
+                                  password: _passwordController.text);
+                            } on FirebaseAuthException catch (e) {
+                              if (e.code == 'email-already-in-use') {
+                                _showSnackBar('이미 사용중인 이메일 입니다');
+                              } else if (e.code == 'invalid-email') {
+                                _showSnackBar('올바르지않은 이메일 입니다');
+                              } else if (e.code == 'operation-not-allowed') {
+                                _showSnackBar('작업불가');
+                              } else if (e.code == 'weak-password') {
+                                _showSnackBar('암호가 강력하지 않습니다');
+                              }
+                            }
+                          } else {
+                            try {
+                              await FirebaseAuth.instance
+                                  .signInWithEmailAndPassword(
+                                  email: _LoginEmailController.text,
+                                  password: _LoginPasswordController.text);
+                            } on FirebaseAuthException catch (e) {
+                              if (e.code == 'invalid-email') {
+                                _showSnackBar('이미 사용중인 이메일 입니다');
+                              } else if (e.code == 'user-disabled') {
+                                'Thrown if the email address is not valid';
+                              } else if (e.code == 'user-not-found') {
+                                _showSnackBar('회원 정보를 찾을 수 없습니다');
+                              } else if (e.code == 'wrong-password') {
+                                _showSnackBar('암호가 올바르지 않습니다');
+                              }
+                            }
+                          }
                         }
                       },
                       child: Text(
@@ -165,7 +198,8 @@ class _AuthPageWidgetState extends State<AuthPageWidget> {
       borderRadius: BorderRadius.circular(10),
       borderSide: BorderSide(color: Colors.transparent, width: 0));
 
-  TextFormField _EmailTextFormField(int valueKey,TextEditingController controller) {
+  TextFormField _EmailTextFormField(int valueKey,
+      TextEditingController controller) {
     return TextFormField(
       key: ValueKey(valueKey),
       controller: controller,
@@ -184,7 +218,8 @@ class _AuthPageWidgetState extends State<AuthPageWidget> {
     );
   }
 
-  TextFormField _PasswordTextFormField(int valueKey, TextEditingController controller) {
+  TextFormField _PasswordTextFormField(int valueKey,
+      TextEditingController controller) {
     return TextFormField(
       key: ValueKey(valueKey),
       controller: controller,
@@ -238,5 +273,10 @@ class _AuthPageWidgetState extends State<AuthPageWidget> {
     );
   }
 
-
+  void _showSnackBar(String title) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(title,
+        textAlign: TextAlign.center,),
+      duration: Duration(seconds: 1),));
+  }
 }
