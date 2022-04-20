@@ -20,10 +20,12 @@ class AuthPageWidget extends StatefulWidget {
 }
 
 class _AuthPageWidgetState extends State<AuthPageWidget> {
-  GlobalKey<FormState> _FormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _FormKey = GlobalKey<FormState>();
 
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  TextEditingController _LoginEmailController = TextEditingController();
+  TextEditingController _LoginPasswordController = TextEditingController();
   TextEditingController _cPasswordController = TextEditingController();
 
   bool _isRegister = true;
@@ -55,58 +57,23 @@ class _AuthPageWidgetState extends State<AuthPageWidget> {
                   ),
                   SizedBox(height: 20),
                   _AuthStateButton(),
-                  TextFormField(
-                    key: ValueKey(1),
-                    controller: _emailController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return '정보를 입력 해 주세요';
-                      } else if (!value.contains('@')) {
-                        return '올바른 이메일을 입력 해 주세요';
-                      }
-                      return null;
-                    },
-                    cursorColor: Colors.white,
-                    style: TextStyle(color: Colors.white),
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: _inputDecoration('E-mail'),
+                  if(_isRegister)
+                  Column(
+                    children: [
+                      _EmailTextFormField(1,_emailController),
+                      SizedBox(height: 20),
+                      _PasswordTextFormField(2,_passwordController),
+                      SizedBox(height: 20),
+                      _ConfirmPasswordTextFormField(),
+                    ],
                   ),
-                  SizedBox(height: 20),
-                  TextFormField(
-                    key: ValueKey(2),
-                    controller: _passwordController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return '정보를 입력 해 주세요';
-                      } else if (value.length < 6) {
-                        return '여섯글자 이상 입력 해주세요';
-                      }
-                      return null;
-                    },
-                    cursorColor: Colors.white,
-                    style: TextStyle(color: Colors.white),
-                    keyboardType: TextInputType.text,
-                    obscureText: true,
-                    decoration: _inputDecoration('Password'),
-                  ),
-                  SizedBox(height: 20),
-                  if (_isRegister)
-                    TextFormField(
-                      key: ValueKey(3),
-                      controller: _cPasswordController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return '정보를 입력 해 주세요';
-                        } else if (value == _passwordController.value) {
-                          return null;
-                        }
-                        return null;
-                      },
-                      cursorColor: Colors.white,
-                      style: TextStyle(color: Colors.white),
-                      keyboardType: TextInputType.text,
-                      obscureText: true,
-                      decoration: _inputDecoration('Confirm Password'),
+                  if(!_isRegister)
+                    Column(
+                      children: [
+                        _EmailTextFormField(3,_LoginEmailController),
+                        SizedBox(height: 20),
+                        _PasswordTextFormField(4,_LoginPasswordController),
+                      ],
                     ),
                   SizedBox(height: 20),
                   ElevatedButton(
@@ -177,17 +144,6 @@ class _AuthPageWidgetState extends State<AuthPageWidget> {
     );
   }
 
-  Container _buildSocialButton(String logoImage, VoidCallback _onPressed) {
-    return Container(
-      width: 50,
-      height: 50,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25), color: Colors.white54),
-      child: IconButton(
-          onPressed: _onPressed, icon: ImageIcon(AssetImage(logoImage))),
-    );
-  }
-
   //TextFormField InputDeco
   InputDecoration _inputDecoration(String lableText) {
     return InputDecoration(
@@ -208,4 +164,79 @@ class _AuthPageWidgetState extends State<AuthPageWidget> {
   OutlineInputBorder _outlineInputBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
       borderSide: BorderSide(color: Colors.transparent, width: 0));
+
+  TextFormField _EmailTextFormField(int valueKey,TextEditingController controller) {
+    return TextFormField(
+      key: ValueKey(valueKey),
+      controller: controller,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return '정보를 입력 해 주세요';
+        } else if (!value.contains('@')) {
+          return '올바른 이메일을 입력 해 주세요';
+        }
+        return null;
+      },
+      cursorColor: Colors.white,
+      style: TextStyle(color: Colors.white),
+      keyboardType: TextInputType.emailAddress,
+      decoration: _inputDecoration('E-mail'),
+    );
+  }
+
+  TextFormField _PasswordTextFormField(int valueKey, TextEditingController controller) {
+    return TextFormField(
+      key: ValueKey(valueKey),
+      controller: controller,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return '정보를 입력 해 주세요';
+        } else if (value.length < 6) {
+          return '여섯글자 이상 입력 해주세요';
+        }
+        return null;
+      },
+      cursorColor: Colors.white,
+      style: TextStyle(color: Colors.white),
+      keyboardType: TextInputType.text,
+      obscureText: true,
+      decoration: _inputDecoration('Password'),
+    );
+  }
+
+  TextFormField _ConfirmPasswordTextFormField() {
+    return TextFormField(
+      key: ValueKey(5),
+      controller: _cPasswordController,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return '정보를 입력 해 주세요';
+        } else if (value != _passwordController.text) {
+          return '비밀번호를 재 확인 해 주세요';
+        } else if (value == _passwordController.text) {
+          return null;
+        }
+        return null;
+      },
+      cursorColor: Colors.white,
+      style: TextStyle(color: Colors.white),
+      keyboardType: TextInputType.text,
+      obscureText: true,
+      decoration: _inputDecoration('Confirm Password'),
+    );
+  }
+
+  //Other Account LoginButton
+  Container _buildSocialButton(String logoImage, VoidCallback _onPressed) {
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(25), color: Colors.white54),
+      child: IconButton(
+          onPressed: _onPressed, icon: ImageIcon(AssetImage(logoImage))),
+    );
+  }
+
+
 }
