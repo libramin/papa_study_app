@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:papa_study_app/provider/page_notifier.dart';
 import 'package:provider/provider.dart';
 
@@ -130,7 +131,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget> {
                   ButtonBar(
                     alignment: MainAxisAlignment.center,
                     children: [
-                      _buildSocialButton('assets/glogo.png', () {}),
+                      _buildSocialButton('assets/glogo.png', () {_signInWithGoogle();}),
                       _buildSocialButton('assets/facelogo.png', () {}),
                       _buildSocialButton('assets/apple.jpeg', () {})
                     ],
@@ -140,6 +141,18 @@ class _AuthPageWidgetState extends State<AuthPageWidget> {
         ),
       ),
     );
+  }
+
+  Future<UserCredential> _signInWithGoogle()async{
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAuthentication googleSignInAuthentication = await googleUser!.authentication;
+
+    final OAuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleSignInAuthentication.accessToken,
+      idToken: googleSignInAuthentication.idToken
+    );
+    final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+    return userCredential;
   }
 
   // Choose AuthState Button
