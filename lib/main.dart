@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:papa_study_app/pages/auth_page.dart';
+import 'package:papa_study_app/pages/email_verification.dart';
 import 'package:papa_study_app/pages/recipe_list_page.dart';
 import 'package:papa_study_app/provider/page_notifier.dart';
 import 'package:provider/provider.dart';
@@ -53,6 +54,7 @@ class PapaStudyApp extends StatelessWidget {
                     key: ValueKey(RecipeListPage.pageName),
                     child: RecipeListPage()),
                 if(pageNotifier.currentPage == AuthPage.pageName) AuthPage(),
+                if(pageNotifier.currentPage == CheckYourEmail.pageName) CheckYourEmail()
               ],
               onPopPage: (route,result){
                 if(!route.didPop(result)){
